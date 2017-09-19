@@ -1,32 +1,16 @@
 from msvcrt import getch
-import functions
+import units
+import graphics
 
-units = {'tag': ['name', 'strength_armor', 'free_armor', 'strength', 'health', 'initiative', 'recovery',
-                 'weapon_damage', 'strength_damage_low', 'strength_damage_high', 'footprint_diameter', 'attack_radius',
-                 'faction', ['ability_names']]}
-
-units_in_play = {'example': ['tag', ]}
-
+units_in_play = [{'player': 1, 'turn_group': 1, 'location': ('a', 1), 'tag': 1, 'armor lost': 0, 'strength lost': 0,
+                  'health lost': 0}]
 turn_order = [[]]
 
-board = {'top': ["-"]*120,
-         'a': ["-"]*100,
-         'b': ["-"]*80,
-         'c': ["-"]*60,
-         'd': ["-"]*10,
-         'e': ["-"]*10,
-         'f': ["-"]*10,
-         'g': ["-"]*10,
-         'h': ["-"]*10,
-         'i': ["-"]*10,
-         'j': ["-"]*10,
-         'bottom': ["-"]*10,
-         }
+cursor location = ['a', 1]
 
-row_order = ['top', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'bottom']
+units = units.init_units_dict('units.csv')
+map = graphics.map_selection(1)
+render = graphics.render_map(map, units_in_play)
 
-functions.display(board)
-
-while True:
-    value = getch()
-    print(value)
+for line in render:
+    print(line)

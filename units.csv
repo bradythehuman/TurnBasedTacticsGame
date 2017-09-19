@@ -1,0 +1,2 @@
+tag,name,strength_armor,free_armor,strength,health,initiative,recovery,weapon_damage,strength_damage_low,strength_damage_high,footprint_diameter,attack_radius,faction,icon,ability_names
+1,Spearman,2,,5,7,,,2,5,5,1,2,human,,punch;barf
