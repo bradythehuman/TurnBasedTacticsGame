@@ -87,7 +87,7 @@ def add_stats(render, cursor, units_in_play):
         render[6] += string_to_list('Damage: ' + str(stats['damage'][0]) + ' / ' + str(stats['damage'][1]) + ' (' + str(stats['damage'][2]) + ':' + str(stats['damage'][3]) + ')')
         render[7] += string_to_list('Initiative: ' + str(stats['initiative'][0]) + ' / ' + str(stats['initiative'][1]))
         render[8] += string_to_list('Recovery: ' + str(stats['recovery']))
-        if stats['attack_range'][0] == 1:
+        if int(stats['attack_range'][0]) == 1:
             render[9] += string_to_list('Attack Range: ' + str(stats['attack_range'][1]))
         else:
             render[9] += string_to_list('Attack Range: ' + str(stats['attack_range'][0]) + ':' + str(stats['attack_range'][1]))
