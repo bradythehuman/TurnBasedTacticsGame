@@ -15,8 +15,25 @@ running = True
 while running:
     scene = graphics.render_map(map, units_in_play)
     scene_w_cursor = graphics.add_cursor(scene, cursor_location)
-    scene_w_stats = units.add_stats(scene_w_cursor, cursor_location, units_in_play)
+
+    current_unit_id = units.find_selected_unit(cursor_location, units_in_play)
+    if current_unit_id:
+        scene_w_stats = units.add_stats(scene_w_cursor, units_in_play, current_unit_id)
+
     graphics.print_screen(scene_w_stats)
+
     ch = getch()
-    cursor_location = graphics.move_cursor(ch, cursor_location)
+    if ch in b'wasd':
+        cursor_location = graphics.move_cursor(ch, cursor_location)
+    elif ch == b'\r' and current_unit_id:
+        action_list_cursor = 0
+        selected_action = ''
+        while not selected_action:
+            ch = getch()
+            if ch in b'ws':
+                if ch == b'w' and action_list_cursor > 0:
+
+
+
+
     print(ch)
