@@ -1,6 +1,3 @@
-ability_effects
-
-
 def use_ability(ability_name):
     pass
 

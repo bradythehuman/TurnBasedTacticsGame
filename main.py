@@ -8,19 +8,12 @@ unit_id_counter = 1
 turn_order = [[]]
 
 cursor_location = ['1', 1, '1by1_square']
-map = graphics.map_selection(1)
+selected_map = graphics.map_selection(1)
 
 running = True
 
 while running:
-    scene = graphics.render_map(map, units_in_play)
-    scene_w_cursor = graphics.add_cursor(scene, cursor_location)
-
-    current_unit_id = units.find_selected_unit(cursor_location, units_in_play)
-    if current_unit_id:
-        scene_w_stats = units.add_stats(scene_w_cursor, units_in_play, current_unit_id)
-
-    graphics.print_screen(scene_w_stats)
+    graphics.graphics(selected_map, units_in_play, cursor_location)
 
     ch = getch()
     if ch in b'wasd':
@@ -28,10 +21,18 @@ while running:
     elif ch == b'\r' and current_unit_id:
         action_list_cursor = 0
         selected_action = ''
+        action_list = []
         while not selected_action:
             ch = getch()
             if ch in b'ws':
                 if ch == b'w' and action_list_cursor > 0:
+                    action_list_cursor += 1
+                elif ch == b's' and action_list_cursor < len(action_list) - 1:
+                    action_list_cursor -= 1
+            elif ch == b'\r':
+                selected_action = action_list[action_list_cursor]
+                action_list = []
+
 
 
 
