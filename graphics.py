@@ -2,15 +2,15 @@ import os
 import units
 
 
-def graphics(selected_map, units_in_play, cursor_location):
+def graphics(selected_map, units_in_play, cursor_location, unit_key):
     scene = render_map(selected_map, units_in_play)
     scene_w_cursor = add_cursor(scene, cursor_location)
 
-    current_unit_id = units.find_selected_unit(cursor_location, units_in_play)
-    if current_unit_id:
-        scene_w_stats = units.add_stats(scene_w_cursor, units_in_play, current_unit_id)
-
-    graphics.print_screen(scene_w_stats)
+    if unit_key:
+        scene_w_stats = units.add_stats(scene_w_cursor, unit_key)
+        print_screen(scene_w_stats)
+    elif:
+        print_screen(scene_w_cursor)
 
 
 def map_selection(map_number):
