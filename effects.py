@@ -10,11 +10,11 @@ def run_effect(effect, type, stats):
         return bleed(type, stats)
 
 
-def block(type, stats):
+def block(type, stats):  # stats = (armor)
     if type == 'stat':
         return stats[0] + 2
 
 
-def bleed(type, health):
+def bleed(type, stats):  # stats = (health)
     if type == 'end_of_turn':
-        return health - 1
+        return stats[0] - 1

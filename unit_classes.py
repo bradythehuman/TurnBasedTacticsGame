@@ -8,25 +8,33 @@ unit_dict = {}
 def find_selected_unit(cursor):
     unit_key = ''
     for key in unit_dict:
-        if unit_dict['location'][0] == cursor[0] and unit_dict[key]['location'][1] == cursor[1]:
+        if unit_dict[key].location[0] == cursor[0] and unit_dict[key].location[1] == cursor[1]:
             unit_key = key
     return unit_key
 
 
-def dynamic_unit_init(unit_type, location):
+def dynamic_unit_init(unit_type, location, player):
+    global unit_count
     constructor = globals()[unit_type]
-    unit_dict[str(unit_count)] = constructor(location)
-    return unit_count + 1
+    unit_dict[str(unit_count)] = constructor(location, player)
+    unit_count += 1
 
 
 class Unit:
     basic_actions = ['move', 'attack', 'rest', 'play_card']
 
-    def __init__(self, location):
+    def __init__(self, location, player):
         self.location = location
-        self.footprint_diameter = 1
+        self.player = player
+        self.group = None
+
+        self.name = 'generic unit class'
+        self.leader = 0  # 0 for no, 1 for yes
+        self.icon = ' '
         self.faction = None
-        self.effects = ['block']
+        self.footprint_diameter = 1
+
+        self.effects = []
         self.effected_stats = None
         self.current_stats = {}
         self.resource_damage = {'armor': 0,
@@ -39,11 +47,16 @@ class Unit:
                            'strength': 0,
                            'health': 0,
                            'initiative': 0,
+                           'recovery': 0,
                            'weapon_damage': 0,
                            'str_damage_lo': None,
                            'str_damage_hi': None,
+                           'attack_range_lo': 0,
+                           'attack_range_hi': 0,
+                           'movement': 0,
                            'abilities': []
                            }
+        self.calculate_stats()
 
     def apply_effects(self):
         stats = self.base_stats.copy()
@@ -72,11 +85,48 @@ class Unit:
         elif max_str_armor > self.current_stats['strength']:
             self.current_stats['armor'] = self.effected_stats['free_armor'] + self.current_stats['strength']
 
+        if self.current_stats['strength'] < self.effected_stats['str_damage_lo']:
+            self.current_stats['damage'] = self.effected_stats['weapon_damage']
+        elif self.current_stats['strength'] >= self.effected_stats['str_damage_hi']:
+            self.current_stats['damage'] = self.effected_stats['weapon_damage'] + self.effected_stats['str_damage_hi'] \
+                                           + 1 - self.effected_stats['str_damage_lo']
+        else:
+            self.current_stats['damage'] = self.effected_stats['weapon_damage'] + self.current_stats['strength'] + 1\
+                                           - self.effected_stats['str_damage_lo']
 
-class Spearman(Unit):
-    def __init__(self, location):
-        self.str_armor = 2
 
-tom = Spearman(('1', 1))
-print(tom.str_armor)
-print(tom)
+class King(Unit):
+    def __init__(self, location, player):
+        self.location = location
+        self.player = player
+        self.footprint_diameter = 1
+
+        self.name = 'King'
+        self.icon = 'K'
+        self.faction = None
+
+        self.effects = []
+        self.effected_stats = None
+        self.current_stats = {}
+        self.resource_damage = {'armor': 0,
+                                'strength': 0,
+                                'health': 0,
+                                'initiative': 0
+                                }
+        self.base_stats = {'str_armor': 5,
+                           'free_armor': 2,
+                           'strength': 8,
+                           'health': 18,
+                           'initiative': 3,
+                           'recovery': 2,
+                           'weapon_damage': 2,
+                           'str_damage_lo': 3,
+                           'str_damage_hi': 4,
+                           'attack_range_lo': 1,
+                           'attack_range_hi': 1,
+                           'movement': 2,
+                           'abilities': []
+                           }
+        self.calculate_stats()
+
+

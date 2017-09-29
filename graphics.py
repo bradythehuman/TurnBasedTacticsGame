@@ -1,16 +1,65 @@
 import os
-import units
+import unit_classes as uc
 
 
-def graphics(selected_map, units_in_play, cursor_location, unit_key):
-    scene = render_map(selected_map, units_in_play)
+def graphics(selected_map, cursor_location, unit_key, action_cursor=0, action_list=[]):
+    map = map_selection(selected_map)
+    scene = render_map(map)
     scene_w_cursor = add_cursor(scene, cursor_location)
 
     if unit_key:
-        scene_w_stats = units.add_stats(scene_w_cursor, unit_key)
-        print_screen(scene_w_stats)
-    elif:
+        scene_w_stats = add_stats(scene_w_cursor, unit_key)
+        if action_list:
+
+            print_screen(add_actions(scene_w_stats, action_cursor, action_list))
+        else:
+            print_screen(scene_w_stats)
+    else:
         print_screen(scene_w_cursor)
+
+
+def string_to_list(string):
+    result = []
+    for i in string:
+        result.append(i)
+    return result
+
+
+def add_stats(render, unit_key):
+    unit = uc.unit_dict[unit_key]
+
+    render[1] += string_to_list(unit.name)
+
+    render[3] += string_to_list('Armor: ' + str(unit.current_stats['armor']) + ' / ' + str(unit.effected_stats['str_armor']) + ' (' + str(unit.effected_stats['free_armor']) + ')')
+    render[4] += string_to_list('Strength: ' + str(unit.current_stats['strength']) + ' / ' + str(unit.effected_stats['strength']))
+    render[5] += string_to_list('Health: ' + str(unit.current_stats['health']) + ' / ' + str(unit.effected_stats['health']))
+    render[6] += string_to_list('Damage: ' + str(unit.current_stats['damage']) + ' / ' + str(unit.effected_stats['weapon_damage']) + ' (' + str(unit.effected_stats['str_damage_lo']) + ':' + str(unit.effected_stats['str_damage_hi']) + ')')
+    render[7] += string_to_list('Initiative: ' + str(unit.current_stats['initiative']) + ' / ' + str(unit.effected_stats['initiative']))
+    render[8] += string_to_list('Recovery: ' + str(unit.effected_stats['recovery']))
+    if unit.effected_stats['attack_range_lo'] == unit.effected_stats['attack_range_hi']:
+        render[9] += string_to_list('Attack Range: ' + str(unit.effected_stats['attack_range_lo']))
+    else:
+        render[9] += string_to_list('Attack Range: ' + str(unit.effected_stats['attack_range_lo']) + ':' + str(unit.effected_stats['attack_range_hi']))
+
+    return render
+
+
+def add_actions(scene, action_cursor, action_list):
+    if action_cursor <= 3:
+        added_lines = ['  ' + x for x in action_list[:5]]
+        print(added_lines[action_cursor])
+
+        added_lines[action_cursor] = ' [' + added_lines[action_cursor][2:] + ']'
+    elif action_cursor == len(action_list) - 1:
+        added_lines = ['   ' + x for x in action_list[-5:]]
+        added_lines[4] = '  [' + added_lines[4][2:] + ']'
+    else:
+        added_lines = ['   ' + x for x in action_list[action_cursor - 3:action_cursor + 2]]
+        added_lines[3] = '  [' + added_lines[3][2:] + ']'
+
+    added_lines = [string_to_list(line) for line in added_lines]
+    return scene + added_lines
+
 
 
 def map_selection(map_number):
@@ -44,8 +93,8 @@ def map_selection(map_number):
     return map
 
 
-def render_map(map, units_in_play):
-    populated_map = populate_map(map, units_in_play)
+def render_map(map):
+    populated_map = populate_map(map)
 
     row_order = ['top', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17',
                  '18', '19', '20', 'bottom']
@@ -61,10 +110,10 @@ def render_map(map, units_in_play):
     return render
 
 
-def populate_map(map_mod, units_in_play):
-    for key in units_in_play:
-        location = units_in_play[key]['location']
-        map_mod[location[0]][location[1]] = 'X'
+def populate_map(map_mod):
+    for key in uc.unit_dict:
+        location = uc.unit_dict[key].location
+        map_mod[location[0]][location[1]] = uc.unit_dict[key].icon
     return map_mod
 
 
